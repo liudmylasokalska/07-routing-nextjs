@@ -14,7 +14,7 @@ export default async function NotesPage({ params }: Props) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug ?? [];
 
-  const tag = slug[0] === "all" ? undefined : slug[0];
+  const tag = slug[0] && slug[0] !== "all" ? slug[0] : undefined;
 
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({

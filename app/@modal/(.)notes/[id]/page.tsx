@@ -6,15 +6,14 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
+type Props = { params: Promise<{ id: string }> };
 
-const Page = async ({ params }: Props) => {
+export default async function Page({ params }: Props) {
   const { id } = await params;
 
   const queryClient = new QueryClient();
 
+  // prefetch через об’єкт
   await queryClient.prefetchQuery({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
@@ -25,6 +24,4 @@ const Page = async ({ params }: Props) => {
       <NotePreviewClient id={id} />
     </HydrationBoundary>
   );
-};
-
-export default Page;
+}

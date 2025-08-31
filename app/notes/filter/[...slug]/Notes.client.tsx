@@ -34,25 +34,26 @@ export default function NotesClient({ tag }: NotesClientProps) {
     setPage(1);
   };
 
-  const handlePageChange = (selectedPage: number) => {
-    setPage(selectedPage);
-  };
+  const handlePageChange = (selectedPage: number) => setPage(selectedPage);
 
-  const closeModal = () => setIsModalOpen(false);
-  const openModal = () => setIsModalOpen(true);
+  const toggleModal = () => setIsModalOpen((prev) => !prev);
+
+  const notes = data?.notes ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const hasNotes = notes.length > 0;
 
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox value={search} onChange={handleSearchChange} />
-        {data && data.totalPages > 1 && (
+        {totalPages > 1 && (
           <Pagination
-            pageCount={data.totalPages}
+            pageCount={totalPages}
             currentPage={page}
             onPageChange={handlePageChange}
           />
         )}
-        <button className={css.button} onClick={openModal}>
+        <button className={css.button} onClick={toggleModal}>
           Create note +
         </button>
       </header>
@@ -62,18 +63,21 @@ export default function NotesClient({ tag }: NotesClientProps) {
       </h2>
 
       {isFetching && <Loader />}
-      {isError && <p>Error: {(error as Error).message}</p>}
-      {data && data.notes.length === 0 && !isFetching && (
+      {isError && <p>Error: {(error as Error)?.message}</p>}
+
+      {!isFetching && !hasNotes && (
         <p className={css.notfound}>
           {debouncedSearch
             ? `No notes found for "${debouncedSearch}"`
             : "No notes found"}
         </p>
       )}
-      {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
+
+      {hasNotes && <NoteList notes={notes} />}
+
       {isModalOpen && (
-        <Modal onClose={closeModal}>
-          <NoteForm onCancel={closeModal} />
+        <Modal onClose={toggleModal}>
+          <NoteForm onCancel={toggleModal} />
         </Modal>
       )}
     </div>
