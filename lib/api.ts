@@ -98,7 +98,7 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
 
 export const getTags = async (): Promise<string[]> => {
   try {
-    const { notes } = await fetchNotes("", 1, 1000);
+    const { notes } = await fetchNotes("");
     return Array.from(new Set(notes.map((note) => note.tag)));
   } catch {
     return [];
